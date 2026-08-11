@@ -7,11 +7,11 @@
   "author": "Lachlan Chen",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lachlanchen/Poker.git"
+    "url": "git+https://github.com/lachlanchen/LazyPoker.git"
   },
-  "homepage": "https://github.com/lachlanchen/Poker#readme",
+  "homepage": "https://github.com/lachlanchen/LazyPoker#readme",
   "bugs": {
-    "url": "https://github.com/lachlanchen/Poker/issues"
+    "url": "https://github.com/lachlanchen/LazyPoker/issues"
   },
   "keywords": [
     "poker",

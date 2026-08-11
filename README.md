@@ -109,7 +109,7 @@ GitHub reads [`CITATION.cff`](CITATION.cff) to expose **Cite this repository**.
   title   = {Open Table: Hold'em, Contract Bridge, and Guandan Decision Teacher},
   year    = {2026},
   version = {0.1.0},
-  url     = {https://github.com/lachlanchen/Poker}
+  url     = {https://github.com/lachlanchen/LazyPoker}
 }
 ```
 

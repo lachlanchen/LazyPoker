@@ -7,8 +7,8 @@ date-released: 2026-08-11
 authors:
   - family-names: Chen
     given-names: Lachlan
-repository-code: "https://github.com/lachlanchen/Poker"
-url: "https://github.com/lachlanchen/Poker"
+repository-code: "https://github.com/lachlanchen/LazyPoker"
+url: "https://github.com/lachlanchen/LazyPoker"
 license: MIT
 keywords:
   - poker
