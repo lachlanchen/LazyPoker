@@ -20,7 +20,13 @@ LazyPoker es un profesor de decisiones local para una mano completa de Texas Hol
 
 [![Captura de pantalla de la aplicación](../docs/images/app.png)](../docs/images/app.png)
 
-La mesa de aprendizaje separa claramente las opciones válidas, las vistas previas sin cambio de estado y las pruebas exactas, calculadas y redactadas.
+La mesa de aprendizaje ofrece a cada juego su propio instrumento compacto de decisión, no una capa genérica de «poder»:
+
+- Hold’em usa un mapa de mesa y precio para textura pública, equidad de cartas visibles, posibles mejoras con la próxima carta, precio de igualar, stack efectivo y compromiso de cada candidato.
+- Bridge usa una brújula de baza para palo de salida, triunfo fijo, ganador visible, obligación de asistir y coste de rango de la carta previsualizada.
+- Guandan usa una cola de iniciativa para orden de respuesta, umbral, cartas individuales que superan, recuentos públicos del equipo y coste de reserva de cartas altas.
+
+Cada turno propio muestra una sugerencia didáctica transparente. Pasar el puntero, enfocar o tocar previsualiza sin modificar; clic derecho o `Esc` la borra y solo el botón de confirmación ejecuta la acción.
 
 ## Qué se puede jugar
 
@@ -35,6 +41,8 @@ La mesa de aprendizaje separa claramente las opciones válidas, las vistas previ
 | --- | --- |
 | [`src/core/`](../src/core/) | Cartas, reglas, candidatos válidos, transiciones de estado, ocultación de información, evaluación y persistencia deterministas. |
 | [`src/i18n/catalogs.ts`](../src/i18n/catalogs.ts) | Once catálogos completos para estudiantes con claves estables y marcadores de posición. |
+| [`src/core/decisionAnalysis.ts`](../src/core/decisionAnalysis.ts) | Evidencia de decisión de Hold’em, Bridge y Guandan derivada solo de observaciones públicas. |
+| [`src/i18n/analysisCatalogs.ts`](../src/i18n/analysisCatalogs.ts) | Traducciones contextuales de los tres instrumentos de análisis específicos. |
 | [`src/App.tsx`](../src/App.tsx) | La mesa de juego multilingüe compartida, la vista previa, la confirmación, el historial y la interfaz de método. |
 | [`docs/model-options.md`](../docs/model-options.md) | Opciones opcionales de solucionador y modelo con sus límites de evidencia y seguridad. |
 | [`docs/smoke-test.md`](../docs/smoke-test.md) | Pasos repetibles de revisión del navegador. |
@@ -58,7 +66,8 @@ Abra la URL local que muestra Vite. El puerto de desarrollo es 8020; si está oc
 - Las vistas públicas eliminan el orden del mazo, las semillas, los libros de contabilidad de solicitudes, las cartas de oponentes, las cartas de socios y el análisis privado antes de renderizarse.
 - Los ID de candidato opacos vinculan el estado autoritativo completo, el actor y la acción canónica; las opciones obsoletas o desconocidas se rechazan de forma segura.
 - La vista previa es hipotética y nunca revela una futura carta comunitaria. Solo la confirmación cambia el estado.
-- Las reglas exactas, las muestras calculadas y la estrategia redactada permanecen etiquetadas por separado. La equidad de Hold'em supone una distribución uniforme de las cartas válidas no vistas; no lee el rango del rival ni se presenta como GTO.
+- Las reglas exactas, las muestras calculadas y la estrategia redactada permanecen etiquetadas por separado. La equidad de Hold’em supone cartas válidas no vistas uniformes; las «mejoras» solo mejoran la mano visible formada y no son outs ganadores garantizados. Ningún valor lee el rango rival ni se presenta como GTO.
+- Bridge solo lee la mano del alumno y cartas ya jugadas; Guandan solo la mano propia, la carta actual, recuentos públicos y cola de respuesta. Cambiar únicamente estado oculto no cambia el análisis semántico.
 
 ## Verificación
 
@@ -72,7 +81,7 @@ bash scripts/test-model-safety.sh
 git diff --check
 ```
 
-Las pruebas cubren reparto determinista, unicidad de cartas, puntuación y conservación de chips, rechazo de candidatos obsoletos, redacción de vista oculta, mutaciones idempotentes, conflictos de persistencia, vistas previas sin mutaciones, fijación de puertos y estricta paridad de claves y marcadores de posición en 11 idiomas.
+Las pruebas cubren reparto determinista, unicidad, puntuación y conservación de chips, candidatos obsoletos, redacción y no interferencia oculta, turnos opacos del agente, idempotencia, conflictos de persistencia, sugerencias, vistas previas borrables sin mutación, recálculo tras confirmar, instrumentos específicos, puerto fijo y paridad estricta de los once catálogos.
 
 ## Citación
 

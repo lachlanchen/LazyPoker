@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { applyHoldemAction, chipTotal, estimateVisibleEquity, initialHoldemState, legalHoldemActions, publicHoldemView } from './holdem'
-import { RuleError } from './types'
+import { RuleError, type Card } from './types'
+
+const card = (id: string, suit: Card['suit'], rank: Card['rank']): Card => ({ id, suit, rank })
 
 function act(state: ReturnType<typeof initialHoldemState>, kind: string, request: string) {
   const candidate = legalHoldemActions(state, state.activePlayer!).find((item) => item.action.kind === kind)
@@ -47,6 +49,31 @@ describe('heads-up Hold’em authority', () => {
     expect(state.community).toHaveLength(5)
     expect(state.winnerIds.length).toBeGreaterThan(0)
     expect(chipTotal(state)).toBe(2_000)
+  })
+
+  it('records a split pot without leaking raw composite actor identifiers', () => {
+    const base = initialHoldemState('localized-split-pot')
+    let state: ReturnType<typeof initialHoldemState> = {
+      ...base,
+      phase: 'river',
+      activePlayer: 'villain',
+      community: [card('TS', 'spades', 10), card('JS', 'spades', 11), card('QS', 'spades', 12), card('KS', 'spades', 13), card('AS', 'spades', 14)],
+      pot: 30,
+      currentBet: 0,
+      needsAction: ['villain', 'hero'],
+      players: [
+        { ...base.players[0], hole: [card('2C', 'clubs', 2), card('3D', 'diamonds', 3)], contribution: 0 },
+        { ...base.players[1], hole: [card('4C', 'clubs', 4), card('5D', 'diamonds', 5)], contribution: 0 },
+      ],
+    }
+    state = act(state, 'check', 'split-check-villain')
+    state = act(state, 'check', 'split-check-hero')
+
+    expect(state.winnerIds).toEqual(['hero', 'villain'])
+    const result = state.events.at(-1)
+    expect(result?.key).toBe('event.splitPot')
+    expect(result?.actor).toBeUndefined()
+    expect(JSON.stringify(result)).not.toContain('hero+villain')
   })
 
   it('settles a fold immediately without revealing the folded hand', () => {

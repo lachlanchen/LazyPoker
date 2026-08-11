@@ -20,7 +20,13 @@ LazyPoker is a local-first decision teacher for a complete heads-up Texas Hold�
 
 [![Application screenshot](docs/images/app.png)](docs/images/app.png)
 
-The current learning table keeps legal choices, non-mutating previews, and exact, calculated, and authored evidence visibly separate.
+The learning table now gives each game its own compact decision instrument instead of a generic “power” overlay:
+
+- Hold’em uses a board-and-price map for public texture, visible-card equity, possible next-card improvements, call price, effective stack, and candidate commitment.
+- Bridge uses a trick compass for led suit, fixed trump, current visible winner, follow-suit lanes, and the rank cost of a previewed card.
+- Guandan uses an initiative queue for the response order, beat threshold, legal beating singles, public team card counts, and high-card reserve cost.
+
+Every own-turn position shows a transparent authored suggestion. Hover, focus, or tap previews it without mutation; right-click or `Esc` clears the preview, and only the confirmation button commits.
 
 ## What is playable
 
@@ -35,6 +41,8 @@ The current learning table keeps legal choices, non-mutating previews, and exact
 | --- | --- |
 | [`src/core/`](src/core/) | Deterministic cards, rules, legal candidates, state transitions, redaction, evaluation, and persistence. |
 | [`src/i18n/catalogs.ts`](src/i18n/catalogs.ts) | Eleven complete learner-facing catalogs with stable keys and placeholders. |
+| [`src/core/decisionAnalysis.ts`](src/core/decisionAnalysis.ts) | Public-observation-only Hold’em, Bridge, and Guandan decision evidence. |
+| [`src/i18n/analysisCatalogs.ts`](src/i18n/analysisCatalogs.ts) | Contextual translations for the three game-specific analysis instruments. |
 | [`src/App.tsx`](src/App.tsx) | The shared multilingual table, preview, confirmation, history, and method interface. |
 | [`docs/model-options.md`](docs/model-options.md) | Optional solver and model choices with their evidence and safety boundaries. |
 | [`docs/smoke-test.md`](docs/smoke-test.md) | Repeatable browser review steps. |
@@ -58,7 +66,8 @@ Open the loopback URL printed by Vite. The configured development port is 8020 a
 - Public views remove deck order, seeds, request ledgers, opponent cards, partner cards, and private analysis before rendering.
 - Opaque candidate IDs bind the complete authoritative state, actor, and canonical action; stale or unknown choices fail closed.
 - Preview is hypothetical and never reveals a future board card. Confirmation is the only mutation path.
-- Exact rules, calculated samples, and authored strategy remain separately labeled. Hold’em equity assumes uniformly random legal unseen cards; it is not an opponent-range read and is not presented as GTO.
+- Exact rules, calculated samples, and authored strategy remain separately labeled. Hold’em equity assumes uniformly random legal unseen cards; “improving cards” improve the visible made hand and are not guaranteed winning outs. Neither value is an opponent-range read or presented as GTO.
+- Bridge guidance reads only the learner hand and cards already played. Guandan guidance reads only the learner hand, current single, public hand counts, and response queue. Hidden-state substitutions are required to leave the semantic analysis unchanged.
 
 ## Verification
 
@@ -72,7 +81,7 @@ bash scripts/test-model-safety.sh
 git diff --check
 ```
 
-Tests cover deterministic dealing, card uniqueness, scoring and chip conservation, stale-candidate rejection, hidden-view redaction, idempotent mutations, persistence conflicts, non-mutating previews, port pinning, and strict 11-language key and placeholder parity.
+Tests cover deterministic dealing, card uniqueness, scoring and chip conservation, stale-candidate rejection, hidden-view redaction, hidden-state analysis noninterference, opaque agent turns, idempotent mutations, persistence conflicts, suggested actions, non-mutating and clearable previews, post-confirmation recomputation, game-specific dashboards, port pinning, and strict 11-language key and placeholder parity.
 
 ## Citation
 

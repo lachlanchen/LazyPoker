@@ -1,4 +1,5 @@
 import type { Locale } from '../core/types'
+import { analysisCatalogs } from './analysisCatalogs'
 
 export const supportedLocales = ["en","ar","es","fr","ja","ko","vi","zh-Hans","zh-Hant","de","ru"] as const satisfies readonly Locale[]
 export const localeLabels: Record<Locale, string> = {
@@ -19,7 +20,7 @@ export function normalizeLocale(value: unknown): Locale {
   return typeof value === 'string' && supportedLocales.includes(value as Locale) ? value as Locale : 'en'
 }
 
-const en = {
+const enBase = {
   "app.title": "Open Table",
   "app.subtitle": "See the structure. Choose with reasons.",
   "app.promise": "Deterministic · private · teachable",
@@ -145,10 +146,12 @@ const en = {
   "status.persistenceFailed": "The table could not be saved. Nothing was committed; please try again.",
 } as const
 
+const en = { ...enBase, ...analysisCatalogs.en } as const
+
 export type MessageKey = keyof typeof en
 type Catalog = Record<MessageKey, string>
 
-const ar: Catalog = {
+const arBase = {
   "app.title": "طاولة مفتوحة",
   "app.subtitle": "افهم البنية، واختر مع ذكر السبب.",
   "app.promise": "حتمية · خاصة · قابلة للتعليم",
@@ -209,7 +212,7 @@ const ar: Catalog = {
   "evidence.authored": "مبدأ تعليمي مكتوب",
   "facet.chips": "حفظ الرقائق",
   "facet.chipsBody": "يبقى مجموع أرصدة الرقائق ومساهمات جولات الرهان ومجموع الرهانات ثابتًا عند 2,000 رقاقة.",
-  "facet.equity": "احتمال الفوز من الأوراق الظاهرة",
+  "facet.equity": "إكويتي البطاقات الظاهرة",
   "facet.equityBody": "محاكاة مونت كارلو حتمية تفترض أن الأوراق المسموح بها غير المرئية موزعة عشوائيًا بالتساوي. ولا تستنتج نطاق يد الخصم.",
   "facet.purpose": "الغرض الاستراتيجي",
   "facet.followSuit": "بنية اللمّة",
@@ -219,7 +222,7 @@ const ar: Catalog = {
   "facet.partnership": "عدسة الشراكة",
   "strategy.fold": "انسحب عندما تتجاوز كلفة المتابعة فرصة اليد الواقعية للفوز، ولا تتمسك بما دفعته بالفعل.",
   "strategy.check": "أبقِ مجموع الرهانات مستقرًا واحتفظ بخيار الرد بعد الحصول على معلومات إضافية.",
-  "strategy.call": "جارِ الرهان من دون إعادة فتحه. قارن الكلفة باحتمال الفوز المحسوب، ثم فكّر في الجولات التالية.",
+  "strategy.call": "جارِ الرهان من دون إعادة فتحه. قارن الكلفة بالإكويتي المحسوب، ثم فكّر في الجولات التالية.",
   "strategy.bet": "راهن للقيمة أو لدفع الخصم إلى الانسحاب، وحدد كلفة القرار التالي.",
   "strategy.raise": "زد الضغط والكلفة. اسأل: أي الأيدي الأضعف ستستمر، وأي الأيدي الأقوى قد تنسحب؟",
   "strategy.bridgePartnership": "ورقتك رسالة أيضًا. احتفظ بطرق الدخول بين اليدين، وراقب اللمّات التي يستطيع شريكك الفوز بها بأمان لاحقًا.",
@@ -274,7 +277,7 @@ const ar: Catalog = {
   "status.persistenceFailed": "تعذّر حفظ الطاولة. لم يُعتمد أي تغيير؛ يرجى المحاولة مرة أخرى.",
 }
 
-const es: Catalog = {
+const esBase = {
   "app.title": "Mesa abierta",
   "app.subtitle": "Ver la estructura. Elige con motivos.",
   "app.promise": "Determinista · privado · enseñable",
@@ -400,7 +403,7 @@ const es: Catalog = {
   "status.persistenceFailed": "No se pudo guardar la mesa. No se confirmó ningún cambio; inténtalo de nuevo.",
 }
 
-const fr: Catalog = {
+const frBase = {
   "app.title": "Table ouverte",
   "app.subtitle": "Voir la structure. Choisissez avec des raisons.",
   "app.promise": "Déterministe · privé · enseignable",
@@ -526,7 +529,7 @@ const fr: Catalog = {
   "status.persistenceFailed": "La table n'a pas pu être enregistrée. Aucun changement n'a été validé ; veuillez réessayer.",
 }
 
-const ja: Catalog = {
+const jaBase = {
   "app.title": "オープンテーブル",
   "app.subtitle": "形を見て、理由とともに選ぶ。",
   "app.promise": "決定的 · 非公開 · 学べる",
@@ -652,7 +655,7 @@ const ja: Catalog = {
   "status.persistenceFailed": "テーブルを保存できませんでした。変更は確定されていません。もう一度お試しください。",
 }
 
-const ko: Catalog = {
+const koBase = {
   "app.title": "오픈 테이블",
   "app.subtitle": "구조를 보고, 이유를 이해한 뒤 선택하세요.",
   "app.promise": "결정적 · 비공개 · 학습 가능",
@@ -778,7 +781,7 @@ const ko: Catalog = {
   "status.persistenceFailed": "테이블을 저장할 수 없습니다. 변경 사항은 확정되지 않았습니다. 다시 시도해 주세요.",
 }
 
-const vi: Catalog = {
+const viBase = {
   "app.title": "Bàn mở",
   "app.subtitle": "Xem cấu trúc. Chọn có lý do.",
   "app.promise": "Tất định · riêng tư · dễ học",
@@ -904,7 +907,7 @@ const vi: Catalog = {
   "status.persistenceFailed": "Không thể lưu bàn. Không có thay đổi nào được xác nhận; vui lòng thử lại.",
 }
 
-const zhHans: Catalog = {
+const zhHansBase = {
   "app.title": "开桌",
   "app.subtitle": "看懂结构，有理有据地选择。",
   "app.promise": "确定规则 · 隐私保护 · 可教学",
@@ -965,7 +968,7 @@ const zhHans: Catalog = {
   "evidence.authored": "教学原则",
   "facet.chips": "筹码守恒",
   "facet.chipsBody": "筹码、轮内下注与底池之和始终是固定的 2,000。",
-  "facet.equity": "可见牌胜率",
+  "facet.equity": "可见牌权益",
   "facet.equityBody": "以合法未知牌均匀随机为假设的确定性蒙特卡洛计算；它不会猜测对手范围。",
   "facet.purpose": "战略目的",
   "facet.followSuit": "一墩结构",
@@ -975,7 +978,7 @@ const zhHans: Catalog = {
   "facet.partnership": "搭档视角",
   "strategy.fold": "当代价超过这手牌可信的获胜路径时，放弃已经投入的成本。",
   "strategy.check": "控制底池，并保留在获得更多信息后应对的选择。",
-  "strategy.call": "支付相同价格而不重开下注。先比较价格与计算胜率，再考虑后续轮次。",
+  "strategy.call": "支付相同价格而不重开下注。先比较价格与计算权益，再考虑后续轮次。",
   "strategy.bet": "争取价值或弃牌率，同时为下一次决定定价。",
   "strategy.raise": "增加压力和价格。问自己：哪些更差的牌会继续，哪些更好的牌会弃？",
   "strategy.bridgePartnership": "你的牌也是信息。保留进手张，并观察搭档以后能安全赢哪一墩。",
@@ -1030,7 +1033,7 @@ const zhHans: Catalog = {
   "status.persistenceFailed": "牌桌无法保存。本次操作没有提交，请重试。",
 }
 
-const zhHant: Catalog = {
+const zhHantBase = {
   "app.title": "開桌",
   "app.subtitle": "看懂結構，有理有據地選擇。",
   "app.promise": "確定規則 · 隱私保護 · 可教學",
@@ -1091,7 +1094,7 @@ const zhHant: Catalog = {
   "evidence.authored": "教學原則",
   "facet.chips": "籌碼守恆",
   "facet.chipsBody": "籌碼、輪內下注與底池之和始終是固定的 2,000。",
-  "facet.equity": "可見牌勝率",
+  "facet.equity": "可見牌權益",
   "facet.equityBody": "以合法未知牌均勻隨機為假設的確定性蒙特卡洛計算；它不會猜測對手範圍。",
   "facet.purpose": "戰略目的",
   "facet.followSuit": "一墩結構",
@@ -1101,7 +1104,7 @@ const zhHant: Catalog = {
   "facet.partnership": "搭檔視角",
   "strategy.fold": "當代價超過這手牌可信的獲勝路徑時，放棄已經投入的成本。",
   "strategy.check": "控制底池，並保留在獲得更多資訊後應對的選擇。",
-  "strategy.call": "支付相同價格而不重開下注。先比較價格與計算勝率，再考慮後續輪次。",
+  "strategy.call": "支付相同價格而不重開下注。先比較價格與計算權益，再考慮後續輪次。",
   "strategy.bet": "爭取價值或棄牌率，同時為下一次決定定價。",
   "strategy.raise": "增加壓力和價格。問自己：哪些更差的牌會繼續，哪些更好的牌會棄？",
   "strategy.bridgePartnership": "你的牌也是資訊。保留進手張，並觀察搭檔以後能安全贏哪一墩。",
@@ -1156,7 +1159,7 @@ const zhHant: Catalog = {
   "status.persistenceFailed": "牌桌無法儲存。本次操作沒有提交，請重試。",
 }
 
-const de: Catalog = {
+const deBase = {
   "app.title": "Offener Tisch",
   "app.subtitle": "Siehe Struktur. Wählen Sie mit Gründen.",
   "app.promise": "Deterministisch · privat · lehrbar",
@@ -1282,7 +1285,7 @@ const de: Catalog = {
   "status.persistenceFailed": "Der Tisch konnte nicht gespeichert werden. Es wurde keine Änderung bestätigt; bitte versuchen Sie es erneut.",
 }
 
-const ru: Catalog = {
+const ruBase = {
   "app.title": "Открытый стол",
   "app.subtitle": "Разберите структуру и выбирайте осознанно.",
   "app.promise": "Детерминированно · конфиденциально · наглядно",
@@ -1407,6 +1410,17 @@ const ru: Catalog = {
   "status.persistenceConflict": "Сначала пришло другое обновление. Восстановлен последний сохранённый игровой стол; выберите снова.",
   "status.persistenceFailed": "Не удалось сохранить стол. Изменение не подтверждено; попробуйте ещё раз.",
 }
+
+const ar: Catalog = { ...arBase, ...analysisCatalogs.ar }
+const es: Catalog = { ...esBase, ...analysisCatalogs.es }
+const fr: Catalog = { ...frBase, ...analysisCatalogs.fr }
+const ja: Catalog = { ...jaBase, ...analysisCatalogs.ja }
+const ko: Catalog = { ...koBase, ...analysisCatalogs.ko }
+const vi: Catalog = { ...viBase, ...analysisCatalogs.vi }
+const zhHans: Catalog = { ...zhHansBase, ...analysisCatalogs['zh-Hans'] }
+const zhHant: Catalog = { ...zhHantBase, ...analysisCatalogs['zh-Hant'] }
+const de: Catalog = { ...deBase, ...analysisCatalogs.de }
+const ru: Catalog = { ...ruBase, ...analysisCatalogs.ru }
 
 export const CATALOGS: Record<Locale, Catalog> = {
   "en": en,

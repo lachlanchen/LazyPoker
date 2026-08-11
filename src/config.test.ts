@@ -21,4 +21,31 @@ describe('documented runtime endpoint', () => {
     expect(workflow).toContain('actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020')
     expect(workflow).not.toMatch(/uses:\s+actions\/(?:checkout|setup-node)@v\d/)
   })
+
+  it('switches layout before fixed table and decision-panel minimums can clip', () => {
+    const styles = readFileSync(join(process.cwd(), 'src/styles.css'), 'utf8')
+    const fullLayoutMinimum = 500 + 190 + 14 + 310 + 14
+    const compactLayoutMinimum = 420 + 330 + 14
+
+    expect(1_101 * 0.94).toBeGreaterThanOrEqual(fullLayoutMinimum)
+    expect(821 * 0.94).toBeGreaterThanOrEqual(compactLayoutMinimum)
+    expect(styles).toContain('@media (max-width: 1100px)')
+    expect(styles).toContain('@media (max-width: 820px)')
+  })
+
+  it('keeps all eleven README feature sections aligned with the game-specific instruments', () => {
+    const readmes = [
+      'README.md',
+      ...['ar', 'de', 'es', 'fr', 'ja', 'ko', 'ru', 'vi', 'zh-Hans', 'zh-Hant'].map((locale) => `i18n/README.${locale}.md`),
+    ]
+    for (const path of readmes) {
+      const document = readFileSync(join(process.cwd(), path), 'utf8')
+      expect(document).toContain('Hold’em')
+      expect(document).toContain('Bridge')
+      expect(document).toContain('Guandan')
+      expect(document).toContain('decisionAnalysis.ts')
+      expect(document).toContain('analysisCatalogs.ts')
+      expect(document).toContain('`Esc`')
+    }
+  })
 })

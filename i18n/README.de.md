@@ -20,7 +20,13 @@ LazyPoker ist ein lokal arbeitender Entscheidungstrainer für eine vollständige
 
 [![Screenshot der Anwendung](../docs/images/app.png)](../docs/images/app.png)
 
-Der Lerntisch zeigt zulässige Aktionen, Vorschauen ohne Zustandsänderung sowie exakte, berechnete und verfasste Belege klar getrennt.
+Der Lerntisch gibt jedem Spiel ein eigenes kompaktes Entscheidungsinstrument statt einer allgemeinen „Kraft“-Anzeige:
+
+- Hold’em nutzt eine Board-und-Preis-Karte für öffentliche Struktur, Sichtkarten-Equity, mögliche Verbesserungen durch die nächste Karte, Callpreis, effektiven Stack und den Einsatz jedes Kandidaten.
+- Bridge nutzt einen Stichkompass für Ausspielfarbe, festen Trumpf, sichtbare Führung, Bedienpflicht und Rangkosten der vorgeschauten Karte.
+- Guandan nutzt eine Initiativreihe für Antwortreihenfolge, Schwelle, legale Überbietungen, öffentliche Team-Kartenzahlen und Reservekosten hoher Karten.
+
+In jedem eigenen Zug erscheint ein transparenter Lehrvorschlag. Zeigen, Fokussieren oder Tippen öffnet eine Vorschau ohne Änderung; Rechtsklick oder `Esc` löscht sie, und nur die Bestätigung führt die Aktion aus.
 
 ## Was ist spielbar?
 
@@ -35,6 +41,8 @@ Der Lerntisch zeigt zulässige Aktionen, Vorschauen ohne Zustandsänderung sowie
 | --- | --- |
 | [`src/core/`](../src/core/) | Deterministische Karten, Regeln, zulässige Kandidaten, Zustandsübergänge, Informationsausblendung, Bewertung und Persistenz. |
 | [`src/i18n/catalogs.ts`](../src/i18n/catalogs.ts) | Elf vollständige Kataloge für Lernende mit stabilen Schlüsseln und Platzhaltern. |
+| [`src/core/decisionAnalysis.ts`](../src/core/decisionAnalysis.ts) | Hold’em-, Bridge- und Guandan-Entscheidungsbelege ausschließlich aus öffentlichen Beobachtungen. |
+| [`src/i18n/analysisCatalogs.ts`](../src/i18n/analysisCatalogs.ts) | Kontextübersetzungen für die drei spielspezifischen Analyseinstrumente. |
 | [`src/App.tsx`](../src/App.tsx) | Die gemeinsame mehrsprachige Spieltisch-, Vorschau-, Bestätigungs-, Verlaufs- und Methodenschnittstelle. |
 | [`docs/model-options.md`](../docs/model-options.md) | Optionale Löser- und Modellauswahl mit ihren Evidenz- und Sicherheitsgrenzen. |
 | [`docs/smoke-test.md`](../docs/smoke-test.md) | Wiederholbare Schritte zur Browserüberprüfung. |
@@ -58,7 +66,8 @@ npm run dev
 - Öffentliche Ansichten entfernen vor dem Rendern die Deckreihenfolge, Seeds, Anforderungsbücher, Gegnerkarten, Partnerkarten und private Analysen.
 - Undurchsichtige Kandidaten-IDs binden den vollständigen maßgeblichen Zustand, den Akteur und die kanonische Aktion; veraltete oder unbekannte Auswahlmöglichkeiten werden sicher abgelehnt.
 - Die Vorschau ist hypothetisch und enthüllt niemals eine zukünftige Gemeinschaftskarte. Nur die Bestätigung verändert den Zustand.
-- Exakte Regeln, berechnete Stichproben und verfasste Strategien bleiben separat gekennzeichnet. Die Hold’em-Equity nimmt gleichverteilte zulässige unbekannte Karten an; sie liest keine gegnerische Range und wird nicht als GTO dargestellt.
+- Exakte Regeln, berechnete Stichproben und verfasste Strategien bleiben separat gekennzeichnet. Die Hold’em-Equity nimmt gleichverteilte zulässige unbekannte Karten an; „Verbesserungen“ stärken nur die sichtbare gemachte Hand und sind keine garantierten Gewinn-Outs. Keiner der Werte liest eine gegnerische Range oder wird als GTO dargestellt.
+- Bridge liest nur die eigene Hand und bereits gespielte Karten; Guandan nur die eigene Hand, die aktuelle Einzelkarte, öffentliche Kartenzahlen und die Antwortreihe. Änderungen ausschließlich verborgener Zustände lassen die semantische Analyse unverändert.
 
 ## Überprüfung
 
@@ -72,7 +81,7 @@ bash scripts/test-model-safety.sh
 git diff --check
 ```
 
-Die Tests umfassen deterministisches Handeln, Karteneindeutigkeit, Wertung und Chiperhaltung, Zurückweisung veralteter Kandidaten, Schwärzung in versteckter Ansicht, idempotente Mutationen, Persistenzkonflikte, nicht mutierende Vorschauen, Port-Pinning und strikte 11-Sprachen-Schlüssel- und Platzhalterparität.
+Die Tests umfassen deterministisches Geben, Karteneindeutigkeit, Wertung und Chiperhaltung, veraltete Kandidaten, Redaction und Hidden-State-Nichtbeeinflussung, undurchsichtige Agentenzüge, Idempotenz, Persistenzkonflikte, Vorschläge, löschbare nicht mutierende Vorschauen, Neuberechnung nach Bestätigung, spielspezifische Instrumente, Port-Pinning und strikte Parität aller elf Sprachkataloge.
 
 ## Zitat
 

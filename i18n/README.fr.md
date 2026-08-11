@@ -20,7 +20,13 @@ LazyPoker est un professeur de décision local pour une main complète de Texas 
 
 [![Capture d'écran de l'application](../docs/images/app.png)](../docs/images/app.png)
 
-La table d'apprentissage sépare clairement les choix autorisés, les aperçus sans modification d'état et les preuves exactes, calculées et rédigées.
+La table d’apprentissage donne à chaque jeu son propre instrument de décision compact plutôt qu’une couche générique de « puissance » :
+
+- Hold’em utilise une carte du tableau et du prix pour la texture publique, l’équité des cartes visibles, les améliorations possibles à la prochaine carte, le prix du call, le tapis effectif et l’engagement de chaque candidat.
+- Bridge utilise une boussole du pli pour la couleur entamée, l’atout fixe, le gagnant visible, l’obligation de fournir et le coût de rang de la carte prévisualisée.
+- Guandan utilise une file d’initiative pour l’ordre de réponse, le seuil, les cartes seules gagnantes, les comptes publics d’équipe et le coût de réserve des hautes cartes.
+
+Chaque tour propre affiche une suggestion pédagogique transparente. Survoler, focaliser ou toucher prévisualise sans modifier ; clic droit ou `Esc` efface, et seul le bouton de confirmation joue l’action.
 
 ## Qu'est-ce qui est jouable
 
@@ -35,6 +41,8 @@ La table d'apprentissage sépare clairement les choix autorisés, les aperçus s
 | --- | --- |
 | [`src/core/`](../src/core/) | Cartes, règles, candidats autorisés, transitions d'état, masquage des informations, évaluation et persistance déterministes. |
 | [`src/i18n/catalogs.ts`](../src/i18n/catalogs.ts) | Onze catalogues complets destinés aux apprenants avec des clés stables et des espaces réservés. |
+| [`src/core/decisionAnalysis.ts`](../src/core/decisionAnalysis.ts) | Preuves de décision Hold’em, Bridge et Guandan dérivées uniquement des observations publiques. |
+| [`src/i18n/analysisCatalogs.ts`](../src/i18n/analysisCatalogs.ts) | Traductions contextuelles des trois instruments d’analyse propres aux jeux. |
 | [`src/App.tsx`](../src/App.tsx) | Le tableau multilingue partagé, l’aperçu, la confirmation, l’historique et l’interface de méthode. |
 | [`docs/model-options.md`](../docs/model-options.md) | Choix facultatifs de solveur et de modèle avec leurs limites de preuve et de sécurité. |
 | [`docs/smoke-test.md`](../docs/smoke-test.md) | Étapes de révision du navigateur répétables. |
@@ -58,7 +66,8 @@ Ouvrez l'URL de bouclage imprimée par Vite. Le port de développement configur�
 - Les vues publiques masquent avant le rendu l'ordre des paquets, les graines, le journal des requêtes, les cartes adverses, celles du partenaire et l'analyse privée.
 - Les identifiants opaques lient l'état autoritatif complet, l'acteur et l'action canonique ; tout choix périmé ou inconnu est refusé de manière sûre.
 - L'aperçu est hypothétique et ne révèle jamais une future carte commune. Seule la confirmation modifie l'état.
-- Les règles exactes, les échantillons calculés et la stratégie rédigée restent étiquetés séparément. L'équité du Hold'em suppose une distribution uniforme des cartes autorisées non vues ; elle ne lit pas la range adverse et n'est pas présentée comme GTO.
+- Les règles exactes, les échantillons calculés et la stratégie rédigée restent étiquetés séparément. L’équité Hold’em suppose des cartes légales non vues uniformes ; les « améliorations » renforcent seulement la main visible formée et ne sont pas des outs gagnants garantis. Aucun résultat ne lit la range adverse ni ne se prétend GTO.
+- Bridge ne lit que la main de l’élève et les cartes jouées ; Guandan seulement la main propre, la carte actuelle, les comptes publics et la file de réponse. Modifier uniquement l’état caché ne change pas l’analyse sémantique.
 
 ## Vérification
 
@@ -72,7 +81,7 @@ bash scripts/test-model-safety.sh
 git diff --check
 ```
 
-Les tests couvrent la donne déterministe, l'unicité des cartes, le score et la conservation des jetons, le refus des candidats périmés, le masquage des vues, les changements idempotents, les conflits de persistance, les aperçus sans changement d'état, le port fixe et la parité stricte des clés et espaces réservés dans 11 langues.
+Les tests couvrent donne déterministe, unicité, score et conservation, candidats périmés, masquage et non-interférence cachée, tours d’agent opaques, idempotence, conflits de persistance, suggestions, aperçus effaçables sans mutation, recalcul après confirmation, instruments propres aux jeux, port fixe et parité stricte des onze catalogues.
 
 ## Citation
 

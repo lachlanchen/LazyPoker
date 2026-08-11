@@ -20,7 +20,13 @@ LazyPoker là công cụ dạy quyết định ưu tiên chạy cục bộ cho m
 
 [![Ảnh chụp màn hình ứng dụng](../docs/images/app.png)](../docs/images/app.png)
 
-Bàn học hiện tại tách rõ lựa chọn hợp lệ, bản xem trước không đổi trạng thái, dữ kiện chính xác, bằng chứng tính toán và nguyên tắc biên soạn.
+Bàn học cung cấp một công cụ quyết định gọn riêng cho từng trò, không dùng lớp “sức mạnh” chung:
+
+- Hold’em dùng bản đồ mặt bài và mức giá cho cấu trúc công khai, equity từ bài thấy được, lá tiếp theo có thể cải thiện, giá call, stack hiệu dụng và mức cam kết của từng lựa chọn.
+- Bridge dùng la bàn vòng ăn cho chất dẫn, chất chủ cố định, người đang thắng nhìn thấy, nghĩa vụ theo chất và chi phí hạng của lá xem trước.
+- Guandan dùng hàng đợi quyền đi cho thứ tự phản hồi, ngưỡng chặn, lá lẻ chặn hợp lệ, số bài công khai của đội và chi phí giữ lá cao.
+
+Mỗi lượt của người học đều có gợi ý biên soạn minh bạch. Rê chuột, focus hoặc chạm chỉ xem trước; nhấp phải hoặc `Esc` để xóa, và chỉ nút xác nhận mới thực hiện hành động.
 
 ## Có gì chơi được
 
@@ -35,6 +41,8 @@ Bàn học hiện tại tách rõ lựa chọn hợp lệ, bản xem trước kh
 | --- | --- |
 | [`src/core/`](../src/core/) | Lá bài, luật, ứng viên hợp lệ, chuyển trạng thái, che giấu thông tin, đánh giá và lưu trữ tất định. |
 | [`src/i18n/catalogs.ts`](../src/i18n/catalogs.ts) | Mười một danh mục hoàn chỉnh hướng tới người học với các khóa và phần giữ chỗ ổn định. |
+| [`src/core/decisionAnalysis.ts`](../src/core/decisionAnalysis.ts) | Bằng chứng quyết định Hold’em, Bridge và Guandan chỉ từ quan sát công khai. |
+| [`src/i18n/analysisCatalogs.ts`](../src/i18n/analysisCatalogs.ts) | Bản dịch theo ngữ cảnh cho ba công cụ phân tích riêng từng trò. |
 | [`src/App.tsx`](../src/App.tsx) | Bàn chơi đa ngôn ngữ dùng chung, bản xem trước, xác nhận, lịch sử và giao diện phương pháp. |
 | [`docs/model-options.md`](../docs/model-options.md) | Các lựa chọn mô hình và bộ giải tùy chọn cùng với các bằng chứng và ranh giới an toàn của chúng. |
 | [`docs/smoke-test.md`](../docs/smoke-test.md) | Các bước xem xét trình duyệt lặp lại. |
@@ -58,7 +66,8 @@ Mở URL cục bộ do Vite hiển thị. Cổng phát triển được cố đ�
 - Chế độ xem công khai che thứ tự bộ bài, seed, nhật ký request, bài của đối thủ và đồng đội, cùng phân tích riêng trước khi hiển thị.
 - ID ứng viên không thể đoán gắn với toàn bộ trạng thái chuẩn, người hành động và hành động chính thức; lựa chọn cũ hoặc không xác định bị từ chối an toàn.
 - Bản xem trước chỉ là giả định và không bao giờ tiết lộ lá bài chung trong tương lai. Chỉ thao tác xác nhận mới thay đổi trạng thái.
-- Luật chính xác, mẫu tính toán và chiến lược biên soạn luôn có nhãn riêng. Equity Hold'em giả định các lá chưa thấy hợp lệ có xác suất đồng đều; đây không phải suy đoán range đối thủ và không được trình bày như GTO.
+- Luật chính xác, mẫu tính toán và chiến lược biên soạn luôn có nhãn riêng. Equity Hold’em giả định bài hợp lệ chưa thấy phân bố đồng đều; “lá cải thiện” chỉ nâng tay bài đã tạo nhìn thấy, không phải out chắc chắn thắng. Cả hai không đọc range đối thủ hay tự nhận là GTO.
+- Bridge chỉ đọc tay người học và bài đã đánh; Guandan chỉ đọc tay người học, lá hiện tại, số bài công khai và hàng phản hồi. Chỉ thay trạng thái kín không làm đổi ý nghĩa phân tích.
 
 ## Xác minh
 
@@ -72,7 +81,7 @@ bash scripts/test-model-safety.sh
 git diff --check
 ```
 
-Các bài kiểm tra bao phủ chia bài tất định, tính duy nhất của lá bài, tính điểm và bảo toàn chip, từ chối ứng viên cũ, che giấu chế độ xem, thay đổi trạng thái bất biến theo request, xung đột lưu trữ, xem trước không đổi trạng thái, cố định cổng và đối chiếu nghiêm ngặt khóa cùng phần giữ chỗ của 11 ngôn ngữ.
+Kiểm thử bao phủ chia bài tất định, lá duy nhất, điểm và bảo toàn chip, ứng viên cũ, che giấu và không can thiệp trạng thái kín, lượt agent mờ, idempotency, xung đột lưu, gợi ý, xem trước có thể xóa không đổi trạng thái, tính lại sau xác nhận, công cụ riêng từng trò, cổng cố định và đối chiếu nghiêm ngặt 11 danh mục.
 
 ## Trích dẫn
 

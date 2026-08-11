@@ -157,7 +157,10 @@ function showdown(state: HoldemState): HoldemState {
     remainder -= oddChip
     return { ...player, stack: player.stack + share + oddChip }
   }) as unknown as HoldemState['players']
-  complete = { ...complete, community, deckIndex, players: paid, pot: 0, phase: 'complete', activePlayer: null, needsAction: [], winnerIds, events: [...complete.events, { revision: complete.revision, key: winnerIds.length === 2 ? 'event.splitPot' : 'event.showdownWon', actor: winnerIds.join('+'), amount: share }] }
+  const resultEvent: ChronicleEvent = winnerIds.length === 2
+    ? { revision: complete.revision, key: 'event.splitPot', amount: share }
+    : { revision: complete.revision, key: 'event.showdownWon', actor: winnerIds[0] as HoldemPlayerId, amount: share }
+  complete = { ...complete, community, deckIndex, players: paid, pot: 0, phase: 'complete', activePlayer: null, needsAction: [], winnerIds, events: [...complete.events, resultEvent] }
   return complete
 }
 
