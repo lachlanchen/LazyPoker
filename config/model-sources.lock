@@ -1,0 +1,4 @@
+# name|game|source_url|commit|license|approx_source_mib|status
+open-spiel|holdem|https://github.com/google-deepmind/open_spiel.git|112b77704631fc2ce7ad8e4581f6ca09798ce15a|Apache-2.0|38|research-adapter
+dds|bridge|https://github.com/dds-bridge/dds.git|37c8a79f4c67c55d1a309ccb66dd00cb58af464a|Apache-2.0|23|analysis-only
+nuaa-guandan|guandan|https://github.com/LSTM-Kirigaya/NUAA-guandan.git|f6920868649c26536b3dc3fce8ecd1d4f7c755fa|MIT|16|experimental
