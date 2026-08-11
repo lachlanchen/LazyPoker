@@ -12,7 +12,9 @@ state transitions, scoring, history, and persistence.
   authored. Never present a heuristic probability as exact.
 - Hold'em is a complete heads-up hand. Bridge and Guandan are visibly labeled
   beginner teaching tables, not full competitive implementations.
-- Learner-facing text belongs in the `src/i18n` catalogs.
+- Learner-facing text belongs in all eleven `src/i18n` catalogs (`en`, `ar`,
+  `es`, `fr`, `ja`, `ko`, `vi`, `zh-Hans`, `zh-Hant`, `de`, and `ru`) with
+  exact key and interpolation-placeholder parity.
 - Models and generated runtime state belong only in ignored `.local/` paths.
 
 Run `npm run lint && npm test && npm run build && npm run audit` before release.

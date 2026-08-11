@@ -1,4 +1,4 @@
-export type Locale = 'en' | 'zh-Hans' | 'ja'
+export type Locale = 'en' | 'ar' | 'es' | 'fr' | 'ja' | 'ko' | 'vi' | 'zh-Hans' | 'zh-Hant' | 'de' | 'ru'
 export type GameMode = 'holdem' | 'bridge' | 'guandan'
 export type EvidenceKind = 'exact' | 'calculated' | 'authored'
 

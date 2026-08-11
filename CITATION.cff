@@ -1,14 +1,16 @@
 cff-version: 1.2.0
-message: "If you use Open Table, please cite this software."
+message: "If you use LazyPoker, please cite this repository."
 type: software
-title: "Open Table: Hold'em, Contract Bridge, and Guandan Decision Teacher"
+title: "LazyPoker: Hold'em, Contract Bridge, and Guandan Decision Teacher"
 version: 0.1.0
 date-released: 2026-08-11
+abstract: "A deterministic, local-first decision teacher for heads-up Texas Hold'em and bounded introductory Contract Bridge and Guandan tables."
 authors:
   - family-names: Chen
     given-names: Lachlan
+    alias: lachlanchen
 repository-code: "https://github.com/lachlanchen/LazyPoker"
-url: "https://github.com/lachlanchen/LazyPoker"
+url: "https://lazying.art"
 license: MIT
 keywords:
   - poker

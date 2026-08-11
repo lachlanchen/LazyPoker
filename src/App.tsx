@@ -6,7 +6,8 @@ import { applyHoldemAction, currentHandValue, publicHoldemView, type HoldemState
 import { SessionRepository, type GameState, type StoredSession } from './core/sessionStore'
 import { bridgeTeaching, guandanTeaching, holdemTeaching } from './core/teacher'
 import type { Card, EvidenceKind, Facet, GameMode, Locale } from './core/types'
-import { normalizeLocale, translate } from './i18n/catalogs'
+import { localeLabels, normalizeLocale, supportedLocales, translate } from './i18n/catalogs'
+import { localizedDocumentMetadata } from './i18n/metadata'
 
 type Screen = 'table' | 'history' | 'method'
 
@@ -26,7 +27,7 @@ function requestId(prefix: string): string {
 function CardTile({ card, label }: { readonly card: Card | null; readonly label: string }) {
   if (!card) return <span className="card card-back" aria-label={label}><span>◆</span></span>
   const red = card.suit === 'hearts' || card.suit === 'diamonds'
-  return <span className={`card ${red ? 'is-red' : ''}`} aria-label={`${rankLabel(card.rank)} ${card.suit}`}><b>{rankLabel(card.rank)}</b><span>{suitGlyph(card.suit)}</span></span>
+  return <span className={`card ${red ? 'is-red' : ''}`} aria-label={`${rankLabel(card.rank)} ${suitGlyph(card.suit)}`}><b>{rankLabel(card.rank)}</b><span>{suitGlyph(card.suit)}</span></span>
 }
 
 function Hand({ cards, hiddenLabel }: { readonly cards: readonly (Card | null)[]; readonly hiddenLabel: string }) {
@@ -119,7 +120,11 @@ function FacetView({ facet, t }: { readonly facet: Facet; readonly t: (key: stri
 }
 
 function Chronicle({ state, t }: { readonly state: GameState; readonly t: (key: string) => string }) {
-  return <section className="chronicle"><h2>{t('history.title')}</h2><ol>{[...state.events].reverse().map((event, index) => <li key={`${event.revision}-${event.key}-${index}`}><span>{event.revision}</span><div><b>{t(event.key)}</b>{event.actor && <small>{event.actor}</small>}{event.amount !== undefined && <small>{event.amount}</small>}{event.cards && <small>{event.cards.map((card) => card.id).join(' ')}</small>}</div></li>)}</ol></section>
+  const actorLabel = (actor: string) => {
+    const key = actor === 'hero' ? 'you' : actor === 'villain' ? 'villain' : actor
+    return ['you', 'villain', 'north', 'east', 'south', 'west', 'right', 'partner', 'left'].includes(key) ? t(`table.${key}`) : actor
+  }
+  return <section className="chronicle"><h2>{t('history.title')}</h2><ol>{[...state.events].reverse().map((event, index) => <li key={`${event.revision}-${event.key}-${index}`}><span>{event.revision}</span><div><b>{t(event.key)}</b>{event.actor && <small>{actorLabel(event.actor)}</small>}{event.amount !== undefined && <small>{event.amount}</small>}{event.cards && <small>{event.cards.map((card) => card.id).join(' ')}</small>}</div></li>)}</ol></section>
 }
 
 export function App() {
@@ -136,7 +141,17 @@ export function App() {
   const t = (key: string, values?: Record<string, string | number>) => translate(locale, key, values)
   const selectLocale = (value: string) => { const next = normalizeLocale(value); setLocale(next); localStorage.setItem('open-table.locale', next) }
   useEffect(() => {
+    const metadata = localizedDocumentMetadata(locale)
     document.documentElement.lang = locale
+    document.documentElement.dir = locale === 'ar' ? 'rtl' : 'ltr'
+    document.title = metadata.title
+    let description = document.querySelector<HTMLMetaElement>('meta[name="description"]')
+    if (!description) {
+      description = document.createElement('meta')
+      description.name = 'description'
+      document.head.append(description)
+    }
+    description.content = metadata.description
   }, [locale])
   const start = () => {
     if (mutationInFlight.current) return
@@ -184,8 +199,8 @@ export function App() {
   }, [repository, historyVersion])
   const resumed = repository.resume(mode)
 
-  return <div className="app-shell">
-    <header><div className="brand"><span className="brand-mark">◈</span><div><b>{t('app.title')}</b><small>{t('app.subtitle')}</small></div></div><nav aria-label={t('nav.primary')}><button className={screen === 'table' ? 'active' : ''} onClick={() => setScreen('table')}>{t('nav.table')}</button><button className={screen === 'history' ? 'active' : ''} onClick={() => setScreen('history')}>{t('nav.history')}</button><button className={screen === 'method' ? 'active' : ''} onClick={() => setScreen('method')}>{t('nav.method')}</button></nav><label className="locale"><span>{t('locale.label')}</span><select value={locale} onChange={(event) => selectLocale(event.target.value)}><option value="en">EN</option><option value="zh-Hans">简中</option><option value="ja">日本語</option></select></label></header>
+  return <div className="app-shell" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+    <header><div className="brand"><span className="brand-mark">◈</span><div><b>{t('app.title')}</b><small>{t('app.subtitle')}</small></div></div><nav aria-label={t('nav.primary')}><button className={screen === 'table' ? 'active' : ''} onClick={() => setScreen('table')}>{t('nav.table')}</button><button className={screen === 'history' ? 'active' : ''} onClick={() => setScreen('history')}>{t('nav.history')}</button><button className={screen === 'method' ? 'active' : ''} onClick={() => setScreen('method')}>{t('nav.method')}</button></nav><label className="locale"><span>{t('locale.label')}</span><select value={locale} onChange={(event) => selectLocale(event.target.value)}>{supportedLocales.map((item) => <option key={item} value={item}>{localeLabels[item]}</option>)}</select></label></header>
     {noticeKey && <div className="status-banner" role="alert">{t(noticeKey)}</div>}
     {screen === 'table' && !session && <main className="launcher"><div className="hero-copy"><span className="eyebrow">{t('app.promise')}</span><h1>{t('app.subtitle')}</h1><p>{t(`mode.${mode}Description`)}</p></div><div className="mode-grid">{(['holdem', 'bridge', 'guandan'] as const).map((item) => <button key={item} className={mode === item ? 'is-selected' : ''} onClick={() => setMode(item)}><span className="mode-symbol">{item === 'holdem' ? '♠' : item === 'bridge' ? '♣' : '大'}</span><b>{t(`mode.${item}`)}</b><small>{t(item === 'holdem' ? 'limit.full' : `limit.${item}Mini`)}</small></button>)}</div><div className="deal-panel"><label><span>{t('start.seed')}</span><input value={seed} onChange={(event) => setSeed(event.target.value)} /></label><small>{t('start.seedHelp')}</small><div>{resumed && <button className="quiet-button" onClick={resume}>{t('start.resume')}</button>}<button className="confirm-button" onClick={start}>{t('start.new')}</button></div></div></main>}
     {screen === 'table' && session && <main className="workspace"><div className="mode-strip"><div><span>{t(`mode.${modeOf(session.state)}`)}</span><small>{t(session.state.kind === 'holdem' ? 'limit.full' : session.state.kind === 'bridge' ? 'limit.bridgeMini' : 'limit.guandanMini')}</small></div><button className="quiet-button" onClick={() => setSession(null)}>{t('start.new')}</button></div><div className="table-column">{session.state.kind === 'holdem' ? <HoldemTable state={session.state} t={t} /> : session.state.kind === 'bridge' ? <BridgeTable state={session.state} t={t} /> : <GuandanTable state={session.state} t={t} />}<Chronicle state={session.state} t={t} /></div><DecisionPanel state={session.state} selectedId={selectedId} onSelect={setSelectedId} onCancel={() => setSelectedId(null)} onConfirm={confirm} t={t} /></main>}

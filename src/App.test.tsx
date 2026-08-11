@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { App } from './App'
 import { applyHoldemAction, legalHoldemActions, type HoldemState } from './core/holdem'
 import { SessionRepository } from './core/sessionStore'
+import { localizedDocumentMetadata } from './i18n/metadata'
 
 describe('Open Table shell', () => {
   it('does not create a session until the learner deals', () => {
@@ -17,6 +18,22 @@ describe('Open Table shell', () => {
     expect(screen.getByText('发一局新课')).toBeInTheDocument()
     expect(screen.getByText('德州扑克')).toBeInTheDocument()
     expect(document.documentElement.lang).toBe('zh-Hans')
+    expect(document.documentElement.dir).toBe('ltr')
+    expect(document.title).toBe(localizedDocumentMetadata('zh-Hans').title)
+    expect(document.querySelector('meta[name="description"]')).toHaveAttribute('content', localizedDocumentMetadata('zh-Hans').description)
+  })
+
+  it('persists an allowlisted Arabic locale and enables RTL direction', () => {
+    render(<App />)
+    const selector = screen.getByLabelText('Language')
+    expect(selector.querySelectorAll('option')).toHaveLength(11)
+    fireEvent.change(selector, { target: { value: 'ar' } })
+    expect(localStorage.getItem('open-table.locale')).toBe('ar')
+    expect(document.documentElement.lang).toBe('ar')
+    expect(document.documentElement.dir).toBe('rtl')
+    expect(document.title).toBe(localizedDocumentMetadata('ar').title)
+    expect(document.querySelector('meta[name="description"]')).toHaveAttribute('content', localizedDocumentMetadata('ar').description)
+    expect(document.querySelector('.app-shell')).toHaveAttribute('dir', 'rtl')
   })
 
   it('creates exactly one session per click and exposes legal intentions', () => {
