@@ -41,7 +41,7 @@ against its own operator.
 
 ## Run
 
-Requires Node.js 22 and npm.
+Requires Node.js `^20.19.0` or `>=22.12.0` and npm.
 
 ```bash
 npm ci
